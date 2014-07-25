@@ -35,6 +35,10 @@
 #include "ui/views/examples/throbber_example.h"
 #include "ui/views/examples/tree_view_example.h"
 #include "ui/views/examples/widget_example.h"
+#include "ui/views/examples/flash_example.h"
+#include "ui/views/examples/html_example.h"
+#include "ui/views/examples/silverlight_example.h"
+#include "ui/views/examples/webbrowser_example.h"
 #include "ui/views/layout/fill_layout.h"
 #include "ui/views/layout/grid_layout.h"
 #include "ui/views/widget/widget.h"
@@ -174,6 +178,10 @@ class ExamplesWindowContents : public WidgetDelegateView,
     combobox_model_.AddExample(new TextfieldExample);
     combobox_model_.AddExample(new ThrobberExample);
     combobox_model_.AddExample(new TreeViewExample);
+    combobox_model_.AddExample(new DemoActiveX);
+    combobox_model_.AddExample(new DemoHtml);
+    combobox_model_.AddExample(new DemoSilverlight);
+    combobox_model_.AddExample(new DemoWebBrowser);
     combobox_model_.AddExample(new WidgetExample);
   }
 

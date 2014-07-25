@@ -1,3 +1,11 @@
+7.25
+=====
+1. add activex controls
+
+7.24
+=====
+1. add profiler tool
+
 7.17
 =====
 1. remove icu/tcmalloc/jemalloc
