@@ -15,6 +15,7 @@
         '../ui/ui.gyp:*',
         '../ui/views/views.gyp:*',
         '../tools/profiler/profiler.gyp:*',
+        '../microbe/microbe.gyp:*',
       ],
     }, # target_name: All
   ],
