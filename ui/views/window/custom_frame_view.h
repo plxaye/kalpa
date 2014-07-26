@@ -29,7 +29,7 @@ class Widget;
 //  rendering the non-standard window caption, border, and controls.
 //
 ////////////////////////////////////////////////////////////////////////////////
-class CustomFrameView : public NonClientFrameView,
+class VIEWS_EXPORT CustomFrameView : public NonClientFrameView,
                         public ButtonListener {
  public:
   CustomFrameView();

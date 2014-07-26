@@ -9,8 +9,10 @@
 #include "base/message_loop/message_loop.h"
 #include "base/memory/scoped_vector.h"
 #include "base/strings/utf_string_conversions.h"
+#include "grit/app_resources.h"
 #include "ui/base/models/combobox_model.h"
 #include "ui/base/ui_base_paths.h"
+#include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/win/hwnd_util.h"
 #include "ui/views/controls/combobox/combobox.h"
 #include "ui/views/controls/label.h"
@@ -44,6 +46,7 @@
 #include "ui/views/layout/grid_layout.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/widget/widget_delegate.h"
+#include "ui/views/window/custom_frame_view.h"
 
 namespace views {
 namespace examples {
@@ -107,6 +110,20 @@ class ExamplesWindowContents : public WidgetDelegateView,
     if (operation_ == QUIT_ON_CLOSE)
       base::MessageLoopForUI::current()->Quit();
   }
+	virtual NonClientFrameView* CreateNonClientFrameView(Widget* widget) OVERRIDE{
+		widget->set_frame_type(Widget::FRAME_TYPE_FORCE_CUSTOM);
+		CustomFrameView* custom_frame_view = new CustomFrameView;
+		custom_frame_view->Init(widget);
+		return custom_frame_view;
+	}
+
+	gfx::ImageSkia GetWindowIcon() OVERRIDE{
+		return *ui::ResourceBundle::GetSharedInstance().GetImageSkiaNamed(IDR_PRODUCT_LOGO_16);
+	}
+
+	bool ShouldShowWindowIcon() const OVERRIDE{
+		return true;
+	}
 
   // Overridden from View:
   virtual void ViewHierarchyChanged(

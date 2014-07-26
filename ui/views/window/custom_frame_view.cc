@@ -129,6 +129,8 @@ void CustomFrameView::Init(Widget* frame) {
 
   if (frame_->widget_delegate()->ShouldShowWindowIcon()) {
     window_icon_ = new ImageButton(this);
+		window_icon_->SetImage(CustomButton::STATE_NORMAL,
+										 &frame_->widget_delegate()->GetWindowIcon());
     AddChildView(window_icon_);
   }
 }

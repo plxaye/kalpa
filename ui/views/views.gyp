@@ -722,6 +722,7 @@
         '../ui.gyp:ui',
         '../ui.gyp:ui_resources',
         'views',
+        '../../app/app_resources.gyp:app_resources', #grit/app_resources.h
       ],
       'include_dirs': [
         '..',
