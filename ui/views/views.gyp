@@ -825,8 +825,10 @@
         'examples/examples_main.cc',
         'examples/examples_views_delegate.cc',
         'examples/examples_views_delegate.h',
-		'../../app/app.exe.rc',
-		'../../app/app.exe.h',
+		'<(DEPTH)/app/app.exe.rc',
+		'<(DEPTH)/app/app.exe.h',
+		'<(SHARED_INTERMEDIATE_DIR)/ui/ui_resources/ui_unscaled_resources.rc', #cursor
+		'<(SHARED_INTERMEDIATE_DIR)/ui/ui_resources/grit/ui_unscaled_resources.h',
       ],
 	  'copies': [ {
          'destination': '<(PRODUCT_DIR)',

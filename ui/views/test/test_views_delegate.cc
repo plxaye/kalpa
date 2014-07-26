@@ -50,13 +50,13 @@ NonClientFrameView* TestViewsDelegate::CreateDefaultNonClientFrameView(
 bool TestViewsDelegate::UseTransparentWindows() const {
   return use_transparent_windows_;
 }
-
+/*
 content::WebContents* TestViewsDelegate::CreateWebContents(
     content::BrowserContext* browser_context,
     content::SiteInstance* site_instance) {
   return NULL;
 }
-
+*/
 void TestViewsDelegate::OnBeforeWidgetInit(
     Widget::InitParams* params,
     internal::NativeWidgetDelegate* delegate) {
