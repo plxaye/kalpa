@@ -38,6 +38,8 @@ base::FilePath GetResourcesPakFilePath(const std::string& pak_name) {
 void ResourceBundle::LoadCommonResources() {
   // As a convenience, add the current resource module as a data packs.
   data_packs_.push_back(new ResourceDataDLL(GetCurrentResourceDLL()));
+
+/*
   // Have high-DPI resources for 140% and 180% scaling on Windows based on
   // default scaling for Metro mode. If high-DPI mode is enabled, load resource
   // pak closest to the desired scale factor.  The high-DPI resources are
@@ -65,9 +67,13 @@ void ResourceBundle::LoadCommonResources() {
         SCALE_FACTOR_100P);
   } else {
     AddDataPackFromPath(
-        GetResourcesPakFilePath("chrome_100_percent.pak"),
+        GetResourcesPakFilePath("resources_100_percent.pak"),
         SCALE_FACTOR_100P);
   }
+*/
+  AddDataPackFromPath(
+      GetResourcesPakFilePath("resources_100_percent.pak"),
+      SCALE_FACTOR_100P);
 }
 
 gfx::Image& ResourceBundle::GetNativeImageNamed(int resource_id, ImageRTL rtl) {

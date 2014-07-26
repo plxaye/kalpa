@@ -578,7 +578,7 @@
         # TODO(jcivelli): ideally the resource needed by views would be
         #                 factored out. (for some reason it pulls in a bunch
         #                 unrelated things like v8, sqlite nss...).
-        '../../chrome/chrome_resources.gyp:packed_resources',
+        '../../app/app_resources.gyp:packed_resources',
         '../../skia/skia.gyp:skia',
         '../../testing/gmock.gyp:gmock',
         '../../testing/gtest.gyp:gtest',
@@ -715,7 +715,7 @@
       'type': '<(component)',
       'dependencies': [
         '../../base/base.gyp:base',
-        '../../chrome/chrome_resources.gyp:packed_resources',
+        '../../app/app_resources.gyp:packed_resources',
         '../../skia/skia.gyp:skia',
         #'../../third_party/icu/icu.gyp:icui18n',
         #'../../third_party/icu/icu.gyp:icuuc',
@@ -806,7 +806,7 @@
       'dependencies': [
         '../../base/base.gyp:base',
         '../../base/base.gyp:base_i18n',
-        '../../chrome/chrome_resources.gyp:packed_resources',
+        '../../app/app_resources.gyp:packed_resources',
         '../../skia/skia.gyp:skia',
         #'../../third_party/icu/icu.gyp:icui18n',
         #'../../third_party/icu/icu.gyp:icuuc',

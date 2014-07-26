@@ -88,7 +88,7 @@
         'ui',
         'ui_resources',
         'ui_test_support',
-        '../chrome/chrome_resources.gyp:packed_resources',
+        '../app/app_resources.gyp:packed_resources',
       ],
       # iOS uses a small subset of ui. common_sources are the only files that
       # are built on iOS.

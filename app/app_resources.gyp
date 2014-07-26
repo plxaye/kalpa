@@ -19,13 +19,13 @@
       ],
       'actions': [
         {
-          'includes': ['chrome_repack_locales.gypi']
+          'includes': ['app_repack_locales.gypi']
         },
         {
-          'includes': ['chrome_repack_pseudo_locales.gypi']
+          'includes': ['app_repack_pseudo_locales.gypi']
         },
         {
-          'includes': ['chrome_repack_chrome_100_percent.gypi']
+          'includes': ['app_repack_resources_100_percent.gypi']
         },
       ],
       'conditions': [
@@ -34,7 +34,7 @@
             {
               'destination': '<(PRODUCT_DIR)',
               'files': [
-                '<(SHARED_INTERMEDIATE_DIR)/repack/chrome_100_percent.pak'
+                '<(SHARED_INTERMEDIATE_DIR)/repack/resources_100_percent.pak'
               ],
             },
             {
