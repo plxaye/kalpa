@@ -875,7 +875,7 @@ void MenuController::SetSelectionOnPointerDown(SubmenuView* source,
   // is sent before the menu appears.  Ignore it.
   //if ((event.flags() & ui::EF_RIGHT_MOUSE_BUTTON) &&
   //    (event.flags() & ui::EF_FROM_TOUCH))
-    return;
+  //  return;
 
   if (part.type == MenuPart::NONE ||
       (part.type == MenuPart::MENU_ITEM && part.menu &&

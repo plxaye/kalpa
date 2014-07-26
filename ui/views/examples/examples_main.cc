@@ -19,7 +19,8 @@
 #include "ui/base/ui_base_paths.h"
 #include "ui/gfx/gfx_paths.h"
 
-int main(int argc, char** argv) {
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                     LPSTR lpCmdLine, int nCmdShow) {
   // Env
 	base::AtExitManager exit_manager;
   CommandLine::Init(0, NULL);

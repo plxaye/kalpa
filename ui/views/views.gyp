@@ -840,9 +840,16 @@
               '-loleacc.lib',
             ]
           },
-          #'VCLinkerTool': {
-          #  'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
-          #},
+		  'msvs_settings': {
+            'VCManifestTool': {
+              'AdditionalManifestFiles': [
+                'examples\\views_examples.exe.manifest',
+              ],
+            },
+			'VCLinkerTool': {
+			  'SubSystem': '2',         # Set /SUBSYSTEM:WINDOWS
+			},
+		  },
           'include_dirs': [
             '../third_party/wtl/include',
           ],
