@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grit latest_public_release="0" current_release="1">
+  <outputs>
+    <output filename="grit/app_resources.h" type="rc_header" context="default_100_percent">
+      <emit emit_type='prepend'></emit>
+    </output>
+    <output filename="grit/app_resources_map.cc" type="resource_map_source" context="default_100_percent" />
+    <output filename="grit/app_resources_map.h" type="resource_map_header" context="default_100_percent" />
+    <!-- TODO(oshima): Remove gfx_resources.pak once DumpRenderTree.gyp
+         is updated. -->
+    <!--<output filename="gfx_resources.pak" type="data_package" context="default_100_percent" />-->
+    <output filename="app_resources_100_percent.pak" type="data_package" context="default_100_percent" /><!--
+    <output filename="ui_resources_200_percent.pak" type="data_package" context="default_200_percent" />
+    <output filename="ui_resources_touch_100_percent.pak" type="data_package" context="touch_100_percent" />
+    <output filename="ui_resources_touch_140_percent.pak" type="data_package" context="touch_140_percent" />
+    <output filename="ui_resources_touch_180_percent.pak" type="data_package" context="touch_180_percent" />-->
+  </outputs>
+  <release seq="1">
+    <structures fallback_to_low_resolution="true">
+      <!-- KEEP THESE IN ALPHABETICAL ORDER!  DO NOT ADD TO RANDOM PLACES JUST
+           BECAUSE YOUR RESOURCES ARE FUNCTIONALLY RELATED OR FALL UNDER THE
+           SAME CONDITIONALS. -->
+      <structure type="chrome_scaled_image" name="IDR_PRODUCT_LOGO_16" file="app_16.png" />
+      <structure type="chrome_scaled_image" name="IDR_PRODUCT_LOGO_32" file="app_32.png" />
+      <structure type="chrome_scaled_image" name="IDR_PRODUCT_LOGO_128" file="app_128.png" />
+      <structure type="chrome_scaled_image" name="IDR_PRODUCT_LOGO_256" file="app_256.png" />
+    </structures>
+  </release>
+</grit>

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "examples_window.h"
+#include "ui/views/examples/examples_window.h"
 
 #include "base/at_exit.h"
 #include "base/command_line.h"
@@ -18,6 +18,8 @@
 #include "ui/base/win/scoped_ole_initializer.h"
 #include "ui/base/ui_base_paths.h"
 #include "ui/gfx/gfx_paths.h"
+#include "ui/views/examples/examples_views_delegate.h"
+
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                      LPSTR lpCmdLine, int nCmdShow) {
@@ -50,11 +52,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   {
 		ui::ScopedOleInitializer ole_init;
 		base::MessageLoop main_message_loop(base::MessageLoop::TYPE_UI);
+		views::examples::ExamplesViewsDelegate views_delegate;
 
 		ui::ResourceBundle::InitSharedInstanceWithLocale("", NULL);
-
 		views::examples::ShowExamplesWindow(views::examples::QUIT_ON_CLOSE);
-
 		main_message_loop.Run();
 
 		ui::ResourceBundle::CleanupSharedInstance();

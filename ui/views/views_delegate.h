@@ -21,13 +21,13 @@
 namespace base {
 class TimeDelta;
 }
-
+/*
 namespace content {
 class WebContents;
 class BrowserContext;
 class SiteInstance;
 }
-
+*/
 namespace gfx {
 class Rect;
 }
@@ -104,12 +104,12 @@ class VIEWS_EXPORT ViewsDelegate {
   // ensure we don't attempt to exit while a menu is showing.
   virtual void AddRef() = 0;
   virtual void ReleaseRef() = 0;
-
+/*
   // Creates a web contents. This will return NULL unless overriden.
   virtual content::WebContents* CreateWebContents(
       content::BrowserContext* browser_context,
       content::SiteInstance* site_instance) = 0;
-
+*/
   // Gives the platform a chance to modify the properties of a Widget.
   virtual void OnBeforeWidgetInit(Widget::InitParams* params,
                                   internal::NativeWidgetDelegate* delegate) = 0;

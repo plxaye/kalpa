@@ -806,22 +806,27 @@
       'dependencies': [
         '../../base/base.gyp:base',
         '../../base/base.gyp:base_i18n',
-        '../../app/app_resources.gyp:packed_resources',
+        '../../app/app_resources.gyp:packed_resources', #resource_100_percent.pak
         '../../skia/skia.gyp:skia',
         #'../../third_party/icu/icu.gyp:icui18n',
         #'../../third_party/icu/icu.gyp:icuuc',
         '../../url/url.gyp:url_lib',
         '../ui.gyp:ui',
-        '../ui.gyp:ui_resources',
+        '../ui.gyp:ui_resources', #grit/ui_resources.h
         'views',
         #'views_test_support',
-        'views_examples_lib'
+        'views_examples_lib',
+        '../../app/app_resources.gyp:app_resources', #grit/app_resources.h
       ],
       #'include_dirs': [
       #  '..',
       #],
       'sources': [
         'examples/examples_main.cc',
+        'examples/examples_views_delegate.cc',
+        'examples/examples_views_delegate.h',
+		'../../app/app.exe.rc',
+		'../../app/app.exe.h',
       ],
 	  'copies': [ {
          'destination': '<(PRODUCT_DIR)',
@@ -843,7 +848,7 @@
 		  'msvs_settings': {
             'VCManifestTool': {
               'AdditionalManifestFiles': [
-                'examples\\views_examples.exe.manifest',
+                '..\\..\\app\\app.exe.manifest',
               ],
             },
 			'VCLinkerTool': {

@@ -28,4 +28,7 @@
   "ui/base/strings/ui_strings.grd": {
     "messages": [4000],
   },
+  "app/resources/app_resources.grd": {
+    "structures": [5000],
+  },
 }

@@ -11,6 +11,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "ui/base/models/combobox_model.h"
 #include "ui/base/ui_base_paths.h"
+#include "ui/gfx/win/hwnd_util.h"
 #include "ui/views/controls/combobox/combobox.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/examples/bubble_example.h"
@@ -202,8 +203,9 @@ void ShowExamplesWindow(Operation operation) {
   if (ExamplesWindowContents::instance()) {
     ExamplesWindowContents::instance()->GetWidget()->Activate();
   } else {
-    Widget::CreateWindowWithBounds(new ExamplesWindowContents(operation),
-                                   gfx::Rect(0, 0, 850, 300))->Show();
+    Widget* window  = Widget::CreateWindowWithBounds(new ExamplesWindowContents(operation),gfx::Rect());
+    gfx::CenterAndSizeWindow(NULL, window->GetNativeWindow(),gfx::Size(800, 600));
+		window->Show();
   }
 }
 
