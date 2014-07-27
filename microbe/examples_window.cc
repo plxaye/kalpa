@@ -52,11 +52,16 @@ class ExamplesWindowContents : public WidgetDelegateView{
     if (operation_ == QUIT_ON_CLOSE)
       base::MessageLoopForUI::current()->Quit();
   }
+	//custframeview太慢了,最好用native的,或者去掉GetWindowMask=todo(hege)
 	virtual NonClientFrameView* CreateNonClientFrameView(Widget* widget) OVERRIDE{
+#if 1
 		widget->set_frame_type(Widget::FRAME_TYPE_FORCE_CUSTOM);
 		CustomFrameView* custom_frame_view = new CustomFrameView;
 		custom_frame_view->Init(widget);
 		return custom_frame_view;
+#else
+		return NULL;
+#endif
 	}
 	virtual gfx::ImageSkia GetWindowIcon() OVERRIDE{
 		return *ui::ResourceBundle::GetSharedInstance().GetImageSkiaNamed(IDR_PRODUCT_LOGO_16);

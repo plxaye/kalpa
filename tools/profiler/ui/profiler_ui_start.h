@@ -4,14 +4,14 @@
 
 class CommandLine;
 
-class ProfilerInit{
+class ProfilerUIStart{
 public:
-  ProfilerInit();
-  ~ProfilerInit();
+  ProfilerUIStart();
+  ~ProfilerUIStart();
 
 public:
   bool Start(const CommandLine& cmdline,int* result_code);
 
 private:
-  DISALLOW_COPY_AND_ASSIGN(ProfilerInit);
+  DISALLOW_COPY_AND_ASSIGN(ProfilerUIStart);
 };

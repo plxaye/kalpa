@@ -8,6 +8,7 @@
 #include "base/command_line.h"
 #include "base/message_loop/message_loop.h"
 #include "base/memory/scoped_ptr.h"
+#include "base/run_loop.h"
 #include "base/time/time.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/win/scoped_com_initializer.h"
@@ -15,12 +16,15 @@
 #include "base/files/file_path.h"
 
 #include "tools/profiler/profiler_logging.h"
-#include "tools/profiler/profiler_window.h"
+//#include "tools/profiler/profiler_window.h"
 #include "tools/profiler/profiler_thread.h"
 #include "tools/profiler/profiler_process.h"
 #include "tools/profiler/result_codes.h"
-#include "tools/profiler/profiler_init.h"
+#include "tools/profiler/ui/profiler_ui_start.h"
 #include "tools/profiler/elevate.h"
+
+#include "ui/base/win/scoped_ole_initializer.h"
+#include "ui/views/focus/accelerator_handler.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -104,7 +108,9 @@ namespace {
 
   void RunUIMessageLoop(ProfilerProcess* profiler_process) {
     base::ThreadRestrictions::SetIOAllowed(false);
-    base::MessageLoopForUI::current()->Run();
+    //base::MessageLoopForUI::current()->Run();
+		views::AcceleratorHandler accelerator_handler;
+		base::RunLoop(&accelerator_handler).Run();
   }
 
 }
@@ -131,15 +137,16 @@ int _cdecl ProfilerMain(const CommandLine& command_line)
   //sub threads
   scoped_ptr<ProfilerProcess> profiler_process(new ProfilerProcess(command_line));
   DCHECK(g_profiler_process);
-  ProfilerInit profiler_init;
+  ProfilerUIStart profiler_ui_start;
   CreateChildThreads(profiler_process.get());
 
   //COM
-  base::win::ScopedCOMInitializer com_initializer;
+  //base::win::ScopedCOMInitializer com_initializer;
+	ui::ScopedOleInitializer ole_init; // for RegisterDragDrop
 
   //ui
   int result_code = ResultCodes::NORMAL_EXIT;
-  if(profiler_init.Start(command_line,&result_code)){
+  if(profiler_ui_start.Start(command_line,&result_code)){
     RunUIMessageLoop(profiler_process.get());
   }
 

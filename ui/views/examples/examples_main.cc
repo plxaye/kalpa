@@ -5,6 +5,7 @@
 #include "ui/views/examples/examples_window.h"
 
 #include "base/at_exit.h"
+#include "base/run_loop.h"
 #include "base/command_line.h"
 #include "base/i18n/icu_util.h"
 #include "base/message_loop/message_loop.h"
@@ -19,6 +20,7 @@
 #include "ui/base/ui_base_paths.h"
 #include "ui/gfx/gfx_paths.h"
 #include "ui/views/examples/examples_views_delegate.h"
+#include "ui/views/focus/accelerator_handler.h"
 
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -56,7 +58,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 		ui::ResourceBundle::InitSharedInstanceWithLocale("", NULL);
 		views::examples::ShowExamplesWindow(views::examples::QUIT_ON_CLOSE);
-		main_message_loop.Run();
+		views::AcceleratorHandler accelerator_handler;
+		base::RunLoop(&accelerator_handler).Run();
 
 		ui::ResourceBundle::CleanupSharedInstance();
 		ui::Clipboard::DestroyClipboardForCurrentThread(); //Note!!!

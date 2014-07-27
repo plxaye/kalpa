@@ -198,7 +198,8 @@ void CustomFrameView::GetWindowMask(const gfx::Size& size,
   if (frame_->IsMaximized())
     return;
 
-  GetDefaultWindowMask(size, window_mask);
+	//Ì«ÂýÁË= todo(hege)
+  //GetDefaultWindowMask(size, window_mask);
 }
 
 void CustomFrameView::ResetWindowControls() {

@@ -3,8 +3,10 @@
 #include "base/at_exit.h"
 #include "base/command_line.h"
 #include "base/logging.h"
+#include "base/process/memory.h"
+
 #include "tools/profiler/profiler_logging.h"
-#include "tools/profiler/exe_main_wtl.h"
+#include "tools/profiler/ui/exe_main_ui.h"
 
 extern int _cdecl ProfilerMain(const CommandLine& command_line);
 extern int _cdecl IsNeedElevate(bool);
@@ -15,11 +17,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   int argc = 0;
   char** argv = NULL;
 
-  profiler_main::LowLevelInit(hInstance);
-
   base::AtExitManager exit_manager;
   CommandLine::Init(argc, argv);
-  const CommandLine& command_line = *CommandLine::ForCurrentProcess();
+  base::EnableTerminationOnHeapCorruption();
+	const CommandLine& command_line = *CommandLine::ForCurrentProcess();
+
+  profiler_ui::LowLevelInit(hInstance);
 
 #ifndef NDEBUG
   if(!IsNeedElevate(false)) {
@@ -37,7 +40,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   int exit_code = ProfilerMain(command_line);
 
   logging::CleanupProfilerLogging();
-  profiler_main::LowLevelShutdown();
+
+  profiler_ui::LowLevelShutdown();
 
   return exit_code;
 }

@@ -41,7 +41,7 @@ bool CElevate::IsWindowsVistaLater()
 		}
 	}
 	
-	return bIsWindowsVista;
+	return !!bIsWindowsVista;
 }
 
 bool CElevate::IsElevated( bool * pbElevated )
@@ -87,7 +87,7 @@ bool CElevate::IsElevated( bool * pbElevated )
 	
 	::CloseHandle( hToken );
 	
-	return bRet;
+	return !!bRet;
 }
 
 bool CElevate::AutoElevate( void )

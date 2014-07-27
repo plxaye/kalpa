@@ -11,6 +11,7 @@
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/process/memory.h"
+#include "base/run_loop.h"
 
 #include "ui/base/clipboard/clipboard.h"
 #include "ui/base/ime/input_method_initializer.h"
@@ -18,6 +19,7 @@
 #include "ui/base/win/scoped_ole_initializer.h"
 #include "ui/base/ui_base_paths.h"
 #include "ui/gfx/gfx_paths.h"
+#include "ui/views/focus/accelerator_handler.h"
 
 #include "microbe/examples_views_delegate.h"
 
@@ -58,7 +60,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		ui::ResourceBundle::InitSharedInstanceWithLocale("", NULL);
 		views::microbe::ShowExamplesWindow(views::microbe::QUIT_ON_CLOSE);
 		views::microbe::LogStatus("hi,microbe!");
-		main_message_loop.Run();
+		views::AcceleratorHandler accelerator_handler;
+		base::RunLoop(&accelerator_handler).Run();
 
 		ui::ResourceBundle::CleanupSharedInstance();
 		ui::Clipboard::DestroyClipboardForCurrentThread(); //Note!!!

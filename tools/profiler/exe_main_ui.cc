@@ -40,7 +40,7 @@ namespace {
   }
 }  // namespace
 
-namespace profiler_main {
+namespace profiler_ui {
 
   void LowLevelInit(void* instance) {
     RegisterInvalidParamHandler();
