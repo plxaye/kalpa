@@ -77,12 +77,29 @@ class ComboboxModelExampleList : public ui::ComboboxModel {
   DISALLOW_COPY_AND_ASSIGN(ComboboxModelExampleList);
 };
 
+class ShownView: public View{
+public:
+	ShownView():shown_container_(NULL){}
+	virtual ~ShownView(){}
+	void Show(View* container){
+		if(shown_container_){
+			shown_container_->SetVisible(false);
+		}
+		RemoveAllChildViews(false);
+		shown_container_ = container;
+		AddChildView(container);
+		container->SetVisible(true);
+	}
+private:
+	View* shown_container_;
+};
+
 class ExamplesWindowContents : public WidgetDelegateView,
                                public ComboboxListener {
  public:
   ExamplesWindowContents(Operation operation)
       : combobox_(new Combobox(&combobox_model_)),
-        example_shown_(new View),
+        example_shown_(new ShownView),
         status_label_(new Label),
         operation_(operation) {
     instance_ = this;
@@ -136,8 +153,7 @@ class ExamplesWindowContents : public WidgetDelegateView,
   virtual void OnSelectedIndexChanged(Combobox* combobox) OVERRIDE {
     DCHECK_EQ(combobox, combobox_);
     DCHECK(combobox->selected_index() < combobox_model_.GetItemCount());
-    example_shown_->RemoveAllChildViews(false);
-    example_shown_->AddChildView(combobox_model_.GetItemViewAt(
+    example_shown_->Show(combobox_model_.GetItemViewAt(
         combobox->selected_index()));
     example_shown_->RequestFocus();
     SetStatus(std::string());
@@ -163,7 +179,7 @@ class ExamplesWindowContents : public WidgetDelegateView,
     if (combobox_model_.GetItemCount() > 0) {
       layout->StartRow(1, 0);
       example_shown_->SetLayoutManager(new FillLayout());
-      example_shown_->AddChildView(combobox_model_.GetItemViewAt(0));
+      example_shown_->Show(combobox_model_.GetItemViewAt(0));
       layout->AddView(example_shown_);
     }
 
@@ -206,7 +222,7 @@ class ExamplesWindowContents : public WidgetDelegateView,
   static ExamplesWindowContents* instance_;
   ComboboxModelExampleList combobox_model_;
   Combobox* combobox_;
-  View* example_shown_;
+  ShownView* example_shown_;
   Label* status_label_;
   const Operation operation_;
 
