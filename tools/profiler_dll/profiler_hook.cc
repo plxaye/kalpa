@@ -31,6 +31,7 @@ typedef LPTOP_LEVEL_EXCEPTION_FILTER (WINAPI* MYSETUNHANDLEDEXCEPTIONFILTER)(LPT
 typedef BOOL    (WINAPI* MYQUEUEUSERWORKITEM)(LPTHREAD_START_ROUTINE Function,PVOID Context,ULONG Flags);
 
 // gdi object: http://msdn.microsoft.com/en-us/magazine/cc188782.aspx
+// http://blog.csdn.net/yangluoning/article/details/17378763
 
 //LoadBitmapA, LoadBitmapW, CreateBitmap, CreateBitmapIndirect, CreateCompatibleBitmap
 typedef HBITMAP (WINAPI* MYLOADBITMAPA)(HINSTANCE hInstance,LPCSTR lpBitmapName);
@@ -90,13 +91,13 @@ typedef HRGN (WINAPI* MyExtCreateRegion)( __in_opt CONST XFORM * lpx, __in DWORD
 
 //DeleteDC,DeleteObject,ReleaseDC
 typedef BOOL (WINAPI* MyDeleteDC)( __in HDC hdc);
-typedef BOOL (WINAPI* MYDELETEOBJECT)(HGDIOBJ ho);
+typedef BOOL (WINAPI* MyDeleteObject)(HGDIOBJ ho);
 typedef int  (WINAPI* MyReleaseDC)(__in_opt HWND hWnd,__in HDC hDC);
 
 //user object: 
 //CreateIcon LoadIcon DestroyIcon
-typedef HICON (WINAPI* MyCreateIcon)(HINSTANCE hInstance,int nWidth,int nHeight,BYTE cPlanes,BYTE cBitsPixel,const BYTE *lpbANDbits,const BYTE *lpbXORbits);
 typedef HICON (WINAPI* MyLoadIcon)(HINSTANCE hInstance,LPCTSTR lpIconName);
+typedef HICON (WINAPI* MyCreateIcon)(HINSTANCE hInstance,int nWidth,int nHeight,BYTE cPlanes,BYTE cBitsPixel,const BYTE *lpbANDbits,const BYTE *lpbXORbits);
 typedef BOOL  (WINAPI* MyDestroyIcon)(__in HICON hIcon);
 
 HMODULE WINAPI OnLoadLibraryW(LPCWSTR lpFileName);
@@ -233,12 +234,12 @@ MyCreateRectRgnIndirect         RealCreateRectRgnIndirect;
 MyCreateRoundRectRgn            RealCreateRoundRectRgn;
 MyExtCreateRegion               RealExtCreateRegion;
 
-MYDELETEOBJECT                  RealDeleteObject;
+MyDeleteObject                  RealDeleteObject;
 MyDeleteDC                      RealDeleteDC;
 MyReleaseDC                     RealReleaseDC;
 
-MyCreateIcon                    RealCreateIcon;
 MyLoadIcon                      RealLoadIcon;
+MyCreateIcon                    RealCreateIcon;
 MyDestroyIcon                   RealDestroyIcon;
 
 HandleWatcher* g_handle_watcher = NULL;
@@ -300,7 +301,7 @@ void Hook()
     DetourAttach(&(PVOID&)RealCreateProcessAsUserW, OnCreateProcessAsUserW);
   }
 
-  //便于定位ChromeMain和WinMain里面的代码块
+  //便于定位ChromeMain和WinMain里面的代码块=
   RealGetCommandLineW = (MYGETCOMMANDLINEW)DetourFindFunction("kernel32.dll", "GetCommandLineW");
   if( RealGetCommandLineW != NULL){
     DetourAttach(&(PVOID&)RealGetCommandLineW, OnGetCommandLineW);
@@ -318,7 +319,7 @@ void Hook()
 
   // gdi
   g_handle_watcher = new HandleWatcher();
-
+  /*
   RealLoadBitmapA = (MYLOADBITMAPA)DetourFindFunction("user32.dll","LoadBitmapA");
   if(RealLoadBitmapA!=NULL){
     DetourAttach(&(PVOID&)RealLoadBitmapA,OnLoadBitmapA);
@@ -328,12 +329,13 @@ void Hook()
   if(RealLoadBitmapW!=NULL){
     DetourAttach(&(PVOID&)RealLoadBitmapW,OnLoadBitmapW);
   }
+  */
 
   RealCreateBitmap = (MYCREATEBITMAP)DetourFindFunction("gdi32.dll","CreateBitmap");
   if(RealCreateBitmap!=NULL){
     DetourAttach(&(PVOID&)RealCreateBitmap,OnCreateBitmap);
   }
-
+  /*
   RealCreateBitmapIndirect = (MYCREATEBITMAPINDIRECT)DetourFindFunction("gdi32.dll","CreateBitmapIndirect");
   if(RealCreateBitmapIndirect!=NULL){
     DetourAttach(&(PVOID&)RealCreateBitmapIndirect,OnCreateBitmapIndirect);
@@ -498,8 +500,8 @@ void Hook()
   if(RealExtCreateRegion != NULL) {
     DetourAttach(&(PVOID&)RealExtCreateRegion,OnExtCreateRegion);
   }
-
-  RealDeleteObject = (MYDELETEOBJECT)DetourFindFunction("gdi32.dll","DeleteObject");
+  */
+  RealDeleteObject = (MyDeleteObject)DetourFindFunction("gdi32.dll","DeleteObject");
   if(RealDeleteObject!=NULL){
     DetourAttach(&(PVOID&)RealDeleteObject,OnDeleteObject);
   }
@@ -514,21 +516,24 @@ void Hook()
     DetourAttach(&(PVOID&)RealReleaseDC,OnReleaseDC);
   }
 /*
-  RealCreateIcon = (MyCreateIcon)DetourFindFunction("user32.dll","CreateIcon");
-  if(RealCreateIcon != NULL) {
-    DetourAttach(&(PVOID&)RealCreateIcon,OnCreateIcon);
-  }
-
   RealLoadIcon = (MyLoadIcon)DetourFindFunction("user32.dll","LoadIcon");
   if(RealLoadIcon != NULL) {
     DetourAttach(&(PVOID&)RealLoadIcon,OnLoadIcon);
   }
+*/
+
+/*
+  RealCreateIcon = (MyCreateIcon)DetourFindFunction("user32.dll","CreateIcon");
+  if(RealCreateIcon != NULL) {
+    DetourAttach(&(PVOID&)RealCreateIcon,OnCreateIcon);
+  }
+*/
 
   RealDestroyIcon = (MyDestroyIcon)DetourFindFunction("user32.dll","DestroyIcon");
   if(RealDestroyIcon != NULL) {
     DetourAttach(&(PVOID&)RealDestroyIcon,OnDestroyIcon);
   }
-*/
+
   DetourTransactionCommit();
 }
 
@@ -735,21 +740,21 @@ void Unhook()
     RealReleaseDC = NULL;
   }
 /*
-  if(RealCreateIcon) {
-    DetourDetach(&(PVOID&)RealCreateIcon,OnCreateIcon);
-    RealCreateIcon = 0;
-  }
-
   if(RealLoadIcon) {
     DetourDetach(&(PVOID&)RealLoadIcon,OnLoadIcon);
     RealLoadIcon = 0;
+  }
+*/
+  if(RealCreateIcon) {
+    DetourDetach(&(PVOID&)RealCreateIcon,OnCreateIcon);
+    RealCreateIcon = 0;
   }
 
   if(RealDestroyIcon){
     DetourDetach(&(PVOID&)RealDestroyIcon,OnDestroyIcon);
     RealDestroyIcon = 0;
   }
-*/
+
   delete g_handle_watcher;
 
   // common
@@ -1117,7 +1122,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI OnSetUnhandledExceptionFilter(LPTOP_LEVEL_EX
   static int count = 0;
   ProfilerData::Action(ticks_start,ticks_end - ticks_start,
     GetCurrentProcessId(),GetCurrentThreadId(),
-    base::StringPrintf(L"SetUnhandledExceptionFilter(%03d)",++count),L"(null)");
+    base::StringPrintf(L"SetUnhandledExceptionFilter(%03d)",++count),pRet?L"Ok":L"Fail");
 
   return pRet;
 }
@@ -1155,7 +1160,7 @@ HBITMAP WINAPI OnLoadBitmapA(HINSTANCE hInstance,LPCSTR lpBitmapName){
     base::StringPrintf(L"OnLoadBitmapA(%03d)",++count),L"null");
 */
   return hRet;
-  }
+}
 
 HBITMAP WINAPI OnLoadBitmapW(HINSTANCE hInstance,LPCWSTR lpBitmapName){
   if(RealLoadBitmapW == NULL)
@@ -1172,7 +1177,7 @@ HBITMAP WINAPI OnLoadBitmapW(HINSTANCE hInstance,LPCWSTR lpBitmapName){
     base::StringPrintf(L"OnLoadBitmapW(%03d)",++count),L"null");
 */
   return hRet;
-  }
+}
 
 // 如果从一个callstack出来的handle一直涨,涨到500就准备崩溃=
 // call_stack可以不加载符号,直接在dump里面来分析=
@@ -1208,7 +1213,7 @@ HBITMAP WINAPI OnCreateBitmapIndirect(CONST BITMAP *pbm){
     base::StringPrintf(L"OnCreateBitmapIndirect(%03d)",++count),L"null");
 */
   return hRet;
-  }
+}
 
 HBITMAP WINAPI OnCreateCompatibleBitmap(HDC hdc, int cx,int cy){
   if(RealCreateCompatibleBitmap == NULL)
@@ -1383,7 +1388,7 @@ HDC WINAPI OnCreateCompatibleDC(HDC hdc)
     return hRet; //调用太频繁了=
   ProfilerData::Action(ticks_start,ticks_end - ticks_start,
     GetCurrentProcessId(),GetCurrentThreadId(),
-    base::StringPrintf(L"OnCreateCompatibleDC(%03d)",++count),L"null");
+    base::StringPrintf(L"OnCreateCompatibleDC(%03d)",++count),hRet?L"Ok":L"Fail");
 
   return hRet;
 }
@@ -1754,7 +1759,7 @@ HRGN WINAPI OnCreateRectRgn( __in int x1, __in int y1, __in int x2, __in int y2)
     return bRet; //调用太频繁了=
   ProfilerData::Action(ticks_start,ticks_end - ticks_start,
     GetCurrentProcessId(),GetCurrentThreadId(),
-    base::StringPrintf(L"OnCreateRectRgn(%03d)",++count),L"null");
+    base::StringPrintf(L"OnCreateRectRgn(%03d)",++count),bRet?L"Ok":L"Fail");
 
   return bRet;
 }
@@ -1827,7 +1832,7 @@ BOOL WINAPI OnDeleteObject(HGDIOBJ ho){
     return bRet; //调用太频繁了=
   ProfilerData::Action(ticks_start,ticks_end - ticks_start,
     GetCurrentProcessId(),GetCurrentThreadId(),
-    base::StringPrintf(L"OnDeleteObject(%03d)(live_gdis:%d)",count,live_gdis),L"null");
+    base::StringPrintf(L"OnDeleteObject(%03d)(live_gdis:%d)",count,live_gdis),bRet?L"Ok":L"Fail");
 
   return bRet;
 }
@@ -1846,7 +1851,7 @@ BOOL WINAPI OnDeleteDC(__in HDC hdc){
     return bRet; //调用太频繁了=
   ProfilerData::Action(ticks_start,ticks_end - ticks_start,
     GetCurrentProcessId(),GetCurrentThreadId(),
-    base::StringPrintf(L"OnDeleteDC(%03d)(live_gdis:%d)",count,live_gdis),L"null");
+    base::StringPrintf(L"OnDeleteDC(%03d)(live_gdis:%d)",count,live_gdis),bRet?L"Ok":L"Fail");
 
   return bRet;
 }
@@ -1865,7 +1870,7 @@ int  WINAPI OnReleaseDC(__in_opt HWND hWnd,__in HDC hDC){
     return iRet; //调用太频繁了=
   ProfilerData::Action(ticks_start,ticks_end - ticks_start,
     GetCurrentProcessId(),GetCurrentThreadId(),
-    base::StringPrintf(L"OnReleaseDC(%03d)(live_gdis:%d)",count,live_gdis),L"null");
+    base::StringPrintf(L"OnReleaseDC(%03d)(live_gdis:%d)",count,live_gdis),iRet?L"Ok":L"Fail");
 
   return iRet;
 }
@@ -1922,7 +1927,7 @@ BOOL WINAPI OnDestroyIcon(__in HICON hIcon){
     return bRet; //调用太频繁了=
   ProfilerData::Action(ticks_start,ticks_end - ticks_start,
     GetCurrentProcessId(),GetCurrentThreadId(),
-    base::StringPrintf(L"OnDestroyIcon(%03d)(live_gdis:%d)",count,live_gdis),L"null");
+    base::StringPrintf(L"OnDestroyIcon(%03d)(live_gdis:%d)",count,live_gdis),bRet?L"Ok":L"Fail");
 
   return bRet;
 }
@@ -1931,3 +1936,10 @@ BOOL WINAPI OnDestroyIcon(__in HICON hIcon){
 
 
 //////////////////////////////////////////////////////////////////////////
+// 监控CreateBitmap DeleteObject,下面代码有句柄泄漏=
+/*
+HICON hICON = (HICON)LoadImage(0, strIconPath.c_str(), IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+if( !hICON){
+  ::DestroyIcon(hICON);		
+}
+*/
