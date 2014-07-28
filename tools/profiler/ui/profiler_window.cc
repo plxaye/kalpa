@@ -17,6 +17,8 @@
 #include "ui/gfx/win/hwnd_util.h"
 #include "ui/gfx/image/image_skia.h"
 #include "ui/views/controls/button/text_button.h"
+#include "ui/views/controls/button/label_button.h"
+#include "ui/views/controls/button/blue_button.h"
 #include "ui/views/controls/combobox/combobox.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/controls/table/table_view.h"
@@ -138,6 +140,14 @@ public:
 private:
   ObserverList<ui::TableModelObserver> observer_list_;
 	std::vector<std::vector<std::wstring>> dataset_;
+};
+
+class ProfilerButton : public views::LabelButton{
+public:
+  ProfilerButton(ButtonListener* listener, const string16& text):LabelButton(listener,text){
+    SetStyle(Button::STYLE_BUTTON);
+  }
+  virtual ~ProfilerButton(){}
 };
 
 }  // namespace
@@ -321,14 +331,14 @@ class ProfilerWindowContents :	public WidgetDelegateView,
 		View* container = new View();
 		container->SetLayoutManager(new BoxLayout(BoxLayout::kHorizontal,2,2,4));
 		
-		container->AddChildView(btn_export_ = new TextButton(this,L"导出全局变量"));
-		container->AddChildView(btn_dump_mini_ = new TextButton(this,L"抓小Dump"));
-		container->AddChildView(btn_dump_full_ = new TextButton(this,L"抓大Dump"));
-		container->AddChildView(btn_dump_open_ = new TextButton(this,L"打开Dump目录"));
-		container->AddChildView(btn_limitedjob_ = new TextButton(this,L"低权限运行"));
-		container->AddChildView(btn_debugrun_ = new TextButton(this,L"调试运行"));
-		container->AddChildView(btn_parser_dump_ = new TextButton(this,L"解析Dump"));
-		container->AddChildView(btn_crash_ = new TextButton(this,L"崩溃吧"));
+		container->AddChildView(btn_export_ = new ProfilerButton(this,L"导出全局变量"));
+		container->AddChildView(btn_dump_mini_ = new ProfilerButton(this,L"抓小Dump"));
+		container->AddChildView(btn_dump_full_ = new ProfilerButton(this,L"抓大Dump"));
+		container->AddChildView(btn_dump_open_ = new ProfilerButton(this,L"打开Dump目录"));
+		container->AddChildView(btn_limitedjob_ = new ProfilerButton(this,L"低权限运行"));
+		container->AddChildView(btn_debugrun_ = new ProfilerButton(this,L"调试运行"));
+		container->AddChildView(btn_parser_dump_ = new ProfilerButton(this,L"解析Dump"));
+		container->AddChildView(btn_crash_ = new ProfilerButton(this,L"崩溃吧"));
 
 		BuildAppButton(container);
 
@@ -379,7 +389,7 @@ class ProfilerWindowContents :	public WidgetDelegateView,
 		for(int i=0;i<app_count;i++){
 			ProfilerData::AppData appdata;
 			GetProfilerData()->GetAppData(i,appdata);
-			TextButton* btn = new TextButton(this,appdata.app_name.c_str());
+			ProfilerButton* btn = new ProfilerButton(this,appdata.app_name.c_str());
 			btn->set_tag(0x1000+i);
 			btn_app_.push_back(btn);
 			container->AddChildView(btn);
@@ -402,9 +412,9 @@ private:
   Label* status_label_;
   const Operation operation_;
 
-  TextButton *btn_export_,*btn_dump_mini_,*btn_dump_full_,*btn_dump_open_;
-  TextButton *btn_runlow_,*btn_limitedjob_,*btn_debugrun_,*btn_parser_dump_,*btn_crash_;
-  std::vector<TextButton*> btn_app_;
+  ProfilerButton *btn_export_,*btn_dump_mini_,*btn_dump_full_,*btn_dump_open_;
+  ProfilerButton *btn_runlow_,*btn_limitedjob_,*btn_debugrun_,*btn_parser_dump_,*btn_crash_;
+  std::vector<ProfilerButton*> btn_app_;
 	
   TableView* list_log_;
   TableView* list_proc_;
@@ -428,7 +438,7 @@ void ShowProfilerWindow(Operation operation) {
     ProfilerWindowContents::instance()->GetWidget()->Activate();
   } else {
     Widget* window  = Widget::CreateWindowWithBounds(new ProfilerWindowContents(operation),gfx::Rect());
-    gfx::CenterAndSizeWindow(NULL, window->GetNativeWindow(),gfx::Size(1024,768));
+    gfx::CenterAndSizeWindow(NULL, window->GetNativeWindow(),gfx::Size(window->GetWindowBoundsInScreen().width(),768));
 		window->Show();
   }
 }

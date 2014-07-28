@@ -319,7 +319,7 @@ void Hook()
 
   // gdi
   g_handle_watcher = new HandleWatcher();
-  /*
+  
   RealLoadBitmapA = (MYLOADBITMAPA)DetourFindFunction("user32.dll","LoadBitmapA");
   if(RealLoadBitmapA!=NULL){
     DetourAttach(&(PVOID&)RealLoadBitmapA,OnLoadBitmapA);
@@ -328,14 +328,13 @@ void Hook()
   RealLoadBitmapW = (MYLOADBITMAPW)DetourFindFunction("user32.dll","LoadBitmapW");
   if(RealLoadBitmapW!=NULL){
     DetourAttach(&(PVOID&)RealLoadBitmapW,OnLoadBitmapW);
-  }
-  */
+  } 
 
   RealCreateBitmap = (MYCREATEBITMAP)DetourFindFunction("gdi32.dll","CreateBitmap");
   if(RealCreateBitmap!=NULL){
     DetourAttach(&(PVOID&)RealCreateBitmap,OnCreateBitmap);
   }
-  /*
+  
   RealCreateBitmapIndirect = (MYCREATEBITMAPINDIRECT)DetourFindFunction("gdi32.dll","CreateBitmapIndirect");
   if(RealCreateBitmapIndirect!=NULL){
     DetourAttach(&(PVOID&)RealCreateBitmapIndirect,OnCreateBitmapIndirect);
@@ -500,7 +499,7 @@ void Hook()
   if(RealExtCreateRegion != NULL) {
     DetourAttach(&(PVOID&)RealExtCreateRegion,OnExtCreateRegion);
   }
-  */
+  
   RealDeleteObject = (MyDeleteObject)DetourFindFunction("gdi32.dll","DeleteObject");
   if(RealDeleteObject!=NULL){
     DetourAttach(&(PVOID&)RealDeleteObject,OnDeleteObject);
@@ -520,9 +519,7 @@ void Hook()
   if(RealLoadIcon != NULL) {
     DetourAttach(&(PVOID&)RealLoadIcon,OnLoadIcon);
   }
-*/
 
-/*
   RealCreateIcon = (MyCreateIcon)DetourFindFunction("user32.dll","CreateIcon");
   if(RealCreateIcon != NULL) {
     DetourAttach(&(PVOID&)RealCreateIcon,OnCreateIcon);
@@ -739,12 +736,12 @@ void Unhook()
     DetourAttach(&(PVOID&)RealReleaseDC,OnReleaseDC);
     RealReleaseDC = NULL;
   }
-/*
+
   if(RealLoadIcon) {
     DetourDetach(&(PVOID&)RealLoadIcon,OnLoadIcon);
     RealLoadIcon = 0;
   }
-*/
+
   if(RealCreateIcon) {
     DetourDetach(&(PVOID&)RealCreateIcon,OnCreateIcon);
     RealCreateIcon = 0;

@@ -74,7 +74,7 @@ namespace profiler_ui {
 		// viewdelegate
 		sViewsDelegate = new views::profiler::ProfilerViewsDelegate;;
 
-		ui::ResourceBundle::InitSharedInstanceWithLocale("", NULL);
+		ui::ResourceBundle::InitSharedInstanceWithLocale("zh-CN", NULL);
   }
 
   void LowLevelShutdown() {
