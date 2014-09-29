@@ -335,7 +335,8 @@ class ProfilerWindowContents :	public WidgetDelegateView,
 		container->AddChildView(btn_dump_mini_ = new ProfilerButton(this,L"抓小Dump"));
 		container->AddChildView(btn_dump_full_ = new ProfilerButton(this,L"抓大Dump"));
 		container->AddChildView(btn_dump_open_ = new ProfilerButton(this,L"打开Dump目录"));
-		container->AddChildView(btn_limitedjob_ = new ProfilerButton(this,L"低权限运行"));
+		container->AddChildView(btn_runlow_ = new ProfilerButton(this,L"低权限运行"));
+		container->AddChildView(btn_limitedjob_ = new ProfilerButton(this,L"所限job运行"));
 		container->AddChildView(btn_debugrun_ = new ProfilerButton(this,L"调试运行"));
 		container->AddChildView(btn_parser_dump_ = new ProfilerButton(this,L"解析Dump"));
 		container->AddChildView(btn_crash_ = new ProfilerButton(this,L"崩溃吧"));
