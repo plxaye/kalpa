@@ -250,6 +250,7 @@ class ProfilerWindowContents :	public WidgetDelegateView,
 
 	// Overriden from ButtonListener
 	virtual void ButtonPressed(Button* sender, const ui::Event& event) OVERRIDE{
+		// G1
 		if(sender == btn_export_){
 		  ProfilerCmd::DumpGlobalVar(GetWidget()->GetNativeView());
 		}
@@ -262,22 +263,36 @@ class ProfilerWindowContents :	public WidgetDelegateView,
 		if(sender == btn_dump_open_){
 		  ProfilerCmd::OpenMinidumpFolder();
 		}
-		if(sender == btn_runlow_){
-		  ProfilerCmd::RunLow(GetWidget()->GetNativeView());
-		}
-		if(sender == btn_limitedjob_){
-		  ProfilerCmd::LimitedJob(GetWidget()->GetNativeView());
-		}
-		if(sender == btn_debugrun_){
-			dataset_log_.DeleteAllItems();
-			ProfilerCmd::DebugRun();
-		}
 		if(sender == btn_parser_dump_){
 			ProfilerCmd::ParserMinidump(GetWidget()->GetNativeView());
 		}
 		if(sender == btn_crash_){
 			ProfilerCmd::CrashIt(list_proc_->FirstSelectedRow());
 		}
+
+		// G2
+		if(sender == btn_runlow_se){
+		  ProfilerCmd::RunLow(GetWidget()->GetNativeView(),L"360se6.exe",L"360se.exe");
+		}
+		if(sender == btn_limitedjob_se){
+		  ProfilerCmd::LimitedJob(GetWidget()->GetNativeView(),L"360se6.exe",L"360se.exe");
+		}
+		if(sender == btn_debugrun_se){
+			dataset_log_.DeleteAllItems();
+			ProfilerCmd::DebugRun(L"360se6.exe",L"360se.exe");
+		}
+		if(sender == btn_runlow_js){
+		  ProfilerCmd::RunLow(GetWidget()->GetNativeView(),L"360chrome.exe",L"360chrome.exe");
+		}
+		if(sender == btn_limitedjob_js){
+		  ProfilerCmd::LimitedJob(GetWidget()->GetNativeView(),L"360chrome.exe",L"360chrome.exe");
+		}
+		if(sender == btn_debugrun_js){
+			dataset_log_.DeleteAllItems();
+			ProfilerCmd::DebugRun(L"360chrome.exe",L"360chrome.exe");
+		}
+
+		// G3
 		if(sender->tag() >= 0x1000){
 			dataset_log_.DeleteAllItems();
 			GetProfilerData()->ProfileApp(sender->tag()-0x1000,window_.hwnd());
@@ -307,9 +322,13 @@ class ProfilerWindowContents :	public WidgetDelegateView,
                           GridLayout::USE_PREF, 0, 0);
     column_set->AddPaddingColumn(0, 4);
     
-		// top cmds
+		// top cmds 1 2 3
     layout->StartRow(0.0f , 0);
-    layout->AddView(GetButtons());
+    layout->AddView(GetButtonsG1());
+    layout->StartRow(0.0f , 0);
+    layout->AddView(GetButtonsG2());
+    layout->StartRow(0.0f , 0);
+    layout->AddView(GetButtonsG3());
 
 		// log view
     layout->StartRow(0.6f , 0);
@@ -324,23 +343,50 @@ class ProfilerWindowContents :	public WidgetDelegateView,
     layout->StartRow(0.0f , 0);
 		layout->AddView(status_label_);
 
-		timer_.Start(FROM_HERE, base::TimeDelta::FromSeconds(5),this,&ProfilerWindowContents::OnTimer);
+		timer_.Start(FROM_HERE, base::TimeDelta::FromSeconds(1),this,&ProfilerWindowContents::OnTimer);
   }
 
-	View* GetButtons(){
+	View* GetButtonsG1(){
 		View* container = new View();
 		container->SetLayoutManager(new BoxLayout(BoxLayout::kHorizontal,2,2,4));
-		
-		container->AddChildView(btn_export_ = new ProfilerButton(this,L"导出全局变量"));
+
+		// group 1
 		container->AddChildView(btn_dump_mini_ = new ProfilerButton(this,L"抓小Dump"));
-		container->AddChildView(btn_dump_full_ = new ProfilerButton(this,L"抓大Dump"));
 		container->AddChildView(btn_dump_open_ = new ProfilerButton(this,L"打开Dump目录"));
-		container->AddChildView(btn_runlow_ = new ProfilerButton(this,L"低权限运行"));
-		container->AddChildView(btn_limitedjob_ = new ProfilerButton(this,L"所限job运行"));
-		container->AddChildView(btn_debugrun_ = new ProfilerButton(this,L"调试运行"));
-		container->AddChildView(btn_parser_dump_ = new ProfilerButton(this,L"解析Dump"));
 		container->AddChildView(btn_crash_ = new ProfilerButton(this,L"崩溃吧"));
 
+		container->AddChildView(btn_export_ = new ProfilerButton(this,L"导出全局变量"));
+		container->AddChildView(btn_dump_full_ = new ProfilerButton(this,L"抓大Dump"));
+		container->AddChildView(btn_parser_dump_ = new ProfilerButton(this,L"解析Dump"));
+
+		// used by internal,disable them
+		btn_export_->SetEnabled(false);
+		btn_dump_full_->SetEnabled(false);
+		btn_parser_dump_->SetEnabled(false);
+
+		return container;
+	}
+
+	View* GetButtonsG2(){
+		View* container = new View();
+		container->SetLayoutManager(new BoxLayout(BoxLayout::kHorizontal,2,2,4));
+
+		// group 2
+		container->AddChildView(btn_runlow_se = new ProfilerButton(this,L"低权限运行se"));
+		container->AddChildView(btn_limitedjob_se = new ProfilerButton(this,L"所限job运行se"));
+		container->AddChildView(btn_debugrun_se = new ProfilerButton(this,L"调试运行se"));
+
+		container->AddChildView(btn_runlow_js = new ProfilerButton(this,L"低权限运行js"));
+		container->AddChildView(btn_limitedjob_js = new ProfilerButton(this,L"所限job运行js"));
+		container->AddChildView(btn_debugrun_js = new ProfilerButton(this,L"调试运行js"));
+
+		return container;
+	}
+	View* GetButtonsG3(){
+		View* container = new View();
+		container->SetLayoutManager(new BoxLayout(BoxLayout::kHorizontal,2,2,4));
+
+		// group 3
 		BuildAppButton(container);
 
 		return container;
@@ -413,8 +459,9 @@ private:
   Label* status_label_;
   const Operation operation_;
 
-  ProfilerButton *btn_export_,*btn_dump_mini_,*btn_dump_full_,*btn_dump_open_;
-  ProfilerButton *btn_runlow_,*btn_limitedjob_,*btn_debugrun_,*btn_parser_dump_,*btn_crash_;
+  ProfilerButton *btn_export_,*btn_dump_mini_,*btn_dump_full_,*btn_dump_open_,*btn_parser_dump_,*btn_crash_;
+  ProfilerButton *btn_runlow_se,*btn_limitedjob_se,*btn_debugrun_se;
+  ProfilerButton *btn_runlow_js,*btn_limitedjob_js,*btn_debugrun_js;
   std::vector<ProfilerButton*> btn_app_;
 	
   TableView* list_log_;

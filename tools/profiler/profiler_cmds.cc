@@ -465,18 +465,18 @@ void DumpGlobalVar(HWND parent)
 }
 
 //////////////////////////////////////////////////////////////////////////
-void RunLow_IO(){
+void RunLow_IO(const std::wstring& apppaths_name,const std::wstring& proc_name){
   int64 ticks_start = base::TimeTicks::HighResNow().ToInternalValue();
   bool run_ok = false;
 
   base::FilePath file_path;
-  file_path = base::FilePath(ProfilerData::GetAppPaths(L"360se6.exe"));
-  std::wstring chrome_path = file_path.value();
-  if(chrome_path.length()){
+  file_path = base::FilePath(ProfilerData::GetAppPaths(apppaths_name));
+  std::wstring app_path = file_path.value();
+  if(app_path.length()){
     int error_code = 0;
-    base::KillProcesses(L"360se.exe",0,NULL);
-    base::WaitForProcessesToExit(L"360se.exe",base::TimeDelta::FromMilliseconds(100),NULL);
-    if(lowpri::ExecuteFileAsLowPri(chrome_path.c_str(),&error_code,NULL)){
+    base::KillProcesses(proc_name,0,NULL);
+    base::WaitForProcessesToExit(proc_name,base::TimeDelta::FromMilliseconds(100),NULL);
+    if(lowpri::ExecuteFileAsLowPri(app_path.c_str(),&error_code,NULL)){
       run_ok = true;
     }
   }
@@ -485,23 +485,23 @@ void RunLow_IO(){
   int64 delta_ms = ticks_end - ticks_start;
 
   g_profiler_process->profiler_data()->RawAction(
-    delta_ms,L"RunLow", run_ok?chrome_path:L"error");
+    delta_ms,L"RunLow", run_ok?app_path:L"error");
 }
 
-void RunLow(HWND parent){
-  ProfilerThread::PostTask(ProfilerThread::IO,FROM_HERE,base::Bind(RunLow_IO));
+void RunLow(HWND parent,const std::wstring& apppaths_name,const std::wstring& proc_name){
+		ProfilerThread::PostTask(ProfilerThread::IO,FROM_HERE,base::Bind(RunLow_IO,apppaths_name,proc_name));
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-void LimitedJob_IO(){
+void LimitedJob_IO(const std::wstring& apppaths_name,const std::wstring& proc_name){
   int64 ticks_start = base::TimeTicks::HighResNow().ToInternalValue();
   bool run_ok = false;
 
   base::FilePath file_path;
-  file_path = base::FilePath(ProfilerData::GetAppPaths(L"360se6.exe"));
-  std::wstring chrome_path = file_path.value();
-  if(chrome_path.length()){
+  file_path = base::FilePath(ProfilerData::GetAppPaths(apppaths_name));
+  std::wstring app_path = file_path.value();
+  if(app_path.length()){
     HANDLE job = ::CreateJobObject(NULL,NULL);
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION extended_info = {0};
     ::QueryInformationJobObject(
@@ -517,11 +517,11 @@ void LimitedJob_IO(){
       &extended_info,
       sizeof(extended_info));
 
-    base::KillProcesses(L"360se.exe",0,NULL);
-    base::WaitForProcessesToExit(L"360se.exe",base::TimeDelta::FromMilliseconds(100),NULL);
+    base::KillProcesses(proc_name,0,NULL);
+    base::WaitForProcessesToExit(proc_name,base::TimeDelta::FromMilliseconds(100),NULL);
     base::LaunchOptions options = base::LaunchOptions();
     options.job_handle = job;
-    run_ok = base::LaunchProcess(chrome_path,options,NULL);
+    run_ok = base::LaunchProcess(app_path,options,NULL);
     CloseHandle(job);
   }
 
@@ -529,11 +529,11 @@ void LimitedJob_IO(){
   int64 delta_ms = ticks_end - ticks_start;
 
   g_profiler_process->profiler_data()->RawAction(
-    delta_ms,L"LimitedJob", run_ok?chrome_path:L"error");
+    delta_ms,L"LimitedJob", run_ok?app_path:L"error");
 }
 
-void LimitedJob(HWND parent){
-  ProfilerThread::PostTask(ProfilerThread::IO,FROM_HERE,base::Bind(LimitedJob_IO));
+void LimitedJob(HWND parent,const std::wstring& apppaths_name,const std::wstring& proc_name){
+	ProfilerThread::PostTask(ProfilerThread::IO,FROM_HERE,base::Bind(LimitedJob_IO,apppaths_name,proc_name));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -551,7 +551,8 @@ void WriteMinidump_IO(bool fulldump){
   PathService::Get(base::DIR_EXE,&file_path);
   file_path = file_path.Append(L"minidump");
   while(const base::ProcessEntry* process_entry = it.NextProcessEntry()){
-    if(::CreateDumpFile(file_path,process_entry->pid(),fulldump?MiniDumpWithFullMemory:MiniDumpNormal,NULL)){
+    if(::CreateDumpFile(file_path,process_entry->pid(),
+			fulldump?MiniDumpWithFullMemory:(MiniDumpNormal | MiniDumpWithHandleData | MiniDumpWithUnloadedModules),NULL)){
       count++;
     }
 }
@@ -645,7 +646,8 @@ void DebugRun_OnException(DWORD pid,DWORD tid,const EXCEPTION_DEBUG_INFO* pInfo,
             exceptionInformation.ThreadId = tid;
             exceptionInformation.ExceptionPointers = &exceptionPointers;
             exceptionInformation.ClientPointers = FALSE;
-            if(CreateDumpFile(file_path,pid,MiniDumpNormal,&exceptionInformation)){
+            if(CreateDumpFile(file_path,pid,MiniDumpNormal | MiniDumpWithHandleData | MiniDumpWithUnloadedModules,
+							&exceptionInformation)){
               DebugRun_Log(L"DebugRun",base::StringPrintf(L"Write 1 minidump to %ls",file_path.value().c_str()));
             }
           }
@@ -714,7 +716,7 @@ void ContinueDebugEventIsSEHFrame(DWORD pid,DWORD tid,DWORD status){
 
 //放到非io线程上，不打扰其他功能执行=
 #pragma warning (disable:4509)
-void DebugRun_DB(){
+void DebugRun_DB(const std::wstring& apppaths_name,const std::wstring& proc_name){
   DCHECK(ProfilerThread::CurrentlyOn(ProfilerThread::DB));
 
   //debug create
@@ -722,10 +724,10 @@ void DebugRun_DB(){
   si.cb = sizeof(si);
   PROCESS_INFORMATION pi = { 0 };
   base::FilePath file_path;
-  file_path = base::FilePath(ProfilerData::GetAppPaths(L"360se6.exe"));
-  std::wstring chrome_path = file_path.value();
+  file_path = base::FilePath(ProfilerData::GetAppPaths(apppaths_name));
+  std::wstring app_path = file_path.value();
   if (!CreateProcess(
-      chrome_path.c_str(),
+      app_path.c_str(),
       NULL,
       NULL,
       NULL,
@@ -736,7 +738,7 @@ void DebugRun_DB(){
       NULL,
       &si,
       &pi)) {
-    DebugRun_Log(L"DebugRun",base::StringPrintf(L"CreateProcess fail:%ls",chrome_path.c_str()));
+    DebugRun_Log(L"DebugRun",base::StringPrintf(L"CreateProcess fail:%ls",app_path.c_str()));
     return;
   }
   DebugRun_Log(L"DebugRun",L"enter");
@@ -801,12 +803,12 @@ void DebugRun_DB(){
 }
 
 //每次都重置一下DB线程，多进程调试时候，这样复位系统内部的port=
-void DebugRun(){
+void DebugRun(const std::wstring& apppaths_name,const std::wstring& proc_name){
   DCHECK(ProfilerThread::CurrentlyOn(ProfilerThread::UI));
-  base::KillProcesses(L"360se.exe",0,NULL);
-  base::WaitForProcessesToExit(L"360se.exe",base::TimeDelta::FromMilliseconds(100),NULL);
+  base::KillProcesses(proc_name,0,NULL);
+  base::WaitForProcessesToExit(proc_name,base::TimeDelta::FromMilliseconds(100),NULL);
   g_profiler_process->reset_dbthread();
-  ProfilerThread::PostTask(ProfilerThread::DB,FROM_HERE,base::Bind(DebugRun_DB));
+  ProfilerThread::PostTask(ProfilerThread::DB,FROM_HERE,base::Bind(DebugRun_DB,apppaths_name,proc_name));
 }
 //////////////////////////////////////////////////////////////////////////
 void ParserMinidump_IO(std::wstring dump_path,std::wstring log_path){

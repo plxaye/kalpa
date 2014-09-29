@@ -1933,7 +1933,7 @@ BOOL WINAPI OnDestroyIcon(__in HICON hIcon){
 
 
 //////////////////////////////////////////////////////////////////////////
-// 监控CreateBitmap DeleteObject,下面代码有句柄泄漏=
+// 监控CreateBitmap DeleteObject,下面代码有句柄泄漏= todo(hege)
 /*
 HICON hICON = (HICON)LoadImage(0, strIconPath.c_str(), IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
 if( !hICON){

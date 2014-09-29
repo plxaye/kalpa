@@ -121,7 +121,9 @@ void HandleWatcher::OnTrack(uint32 id) {
     file_path = file_path.Append(L"minidump");
     MessageBox(GetActiveWindow(),file_path.value().c_str(),L"GdiLeak dump:",MB_OK);
     ProfilerThread::PostTask(ProfilerThread::IO,FROM_HERE,
-      base::Bind(&CreateDumpFile,file_path,GetCurrentProcessId(),MiniDumpNormal,(MINIDUMP_EXCEPTION_INFORMATION *)NULL));
+      base::Bind(&CreateDumpFile,file_path,GetCurrentProcessId(),
+			MiniDumpNormal | MiniDumpWithHandleData | MiniDumpWithUnloadedModules,
+			(MINIDUMP_EXCEPTION_INFORMATION *)NULL));
     Sleep(3*1000);
   }
 }

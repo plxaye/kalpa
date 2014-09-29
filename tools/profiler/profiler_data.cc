@@ -364,7 +364,7 @@ void ProfilerData::BuildAppData()
   base::FilePath file_path;
 
   //360se6
-  appdata.app_name = L"360se-热";
+  appdata.app_name = L"热启动se";
   appdata.app_filename = L"360se.exe";
   file_path = base::FilePath(GetAppPaths(L"360se6.exe"));
   appdata.exe_path = file_path.value();
@@ -379,7 +379,7 @@ void ProfilerData::BuildAppData()
   appdatas_.push_back(appdata);
 
   //360chrome
-  appdata.app_name = L"360极速-热";
+  appdata.app_name = L"热启动js";
   appdata.app_filename = L"360chrome.exe";
   file_path = base::FilePath(GetAppPaths(L"360chrome.exe"));
   appdata.exe_path = file_path.value();
@@ -394,7 +394,7 @@ void ProfilerData::BuildAppData()
   appdatas_.push_back(appdata);
 
   //chrome
-  appdata.app_name = L"Google-热";
+  appdata.app_name = L"热启动cr";
   appdata.app_filename = L"chrome.exe";
   file_path = base::FilePath(GetAppPaths(L"chrome.exe"));
   appdata.exe_path = file_path.value();
@@ -409,7 +409,7 @@ void ProfilerData::BuildAppData()
   appdatas_.push_back(appdata);
 
   //360se6
-  appdata.app_name = L"360se-冷";
+  appdata.app_name = L"冷启动se";
   appdata.app_filename = L"360se.exe";
   file_path = base::FilePath(GetAppPaths(L"360se6.exe"));
   appdata.exe_path = file_path.value();
@@ -424,7 +424,7 @@ void ProfilerData::BuildAppData()
   appdatas_.push_back(appdata);
 
   //360chrome
-  appdata.app_name = L"360极速-冷";
+  appdata.app_name = L"冷启动js";
   appdata.app_filename = L"360chrome.exe";
   file_path = base::FilePath(GetAppPaths(L"360chrome.exe"));
   appdata.exe_path = file_path.value();
@@ -440,7 +440,7 @@ void ProfilerData::BuildAppData()
 
 
   //chrome
-  appdata.app_name = L"Google-冷";
+  appdata.app_name = L"冷启动cr";
   appdata.app_filename = L"chrome.exe";
   file_path = base::FilePath(GetAppPaths(L"chrome.exe"));
   appdata.exe_path = file_path.value();

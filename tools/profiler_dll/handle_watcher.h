@@ -28,7 +28,7 @@ public:
 private:
   // MAX_VALID_HANDLE_COUNT个句柄后开始查找泄漏,按调用路径来合并,
   // 如果和第一名一样,直接崩溃=
-  static const int MAX_VALID_HANDLE_COUNT = 1000;
+  static const int MAX_VALID_HANDLE_COUNT = 3000;
   bool FindLeak(CallStack* current_stack);
 
   // Either 0, or else the threadID for a thread that is actively working on
