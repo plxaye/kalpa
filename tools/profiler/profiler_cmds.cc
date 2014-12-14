@@ -540,12 +540,11 @@ void LimitedJob(HWND parent,const std::wstring& apppaths_name,const std::wstring
 
 //todo(hege),先suspend所有线程然后抓dump(outofprocess)
 //先开个线程然后suspend所有其他线程再抓(inofprocess)
-
-void WriteMinidump_IO(bool fulldump){
+static void WriteMinidump_IO_Core(bool fulldump,const std::wstring& proc_name){
   int64 ticks_start = base::TimeTicks::HighResNow().ToInternalValue();
 
-  int total = base::GetProcessCount(L"360se.exe",NULL);
-  base::NamedProcessIterator it(L"360se.exe",NULL);
+  int total = base::GetProcessCount(proc_name,NULL);
+  base::NamedProcessIterator it(proc_name,NULL);
   int count=0;
   base::FilePath file_path;
   PathService::Get(base::DIR_EXE,&file_path);
@@ -555,13 +554,21 @@ void WriteMinidump_IO(bool fulldump){
 			fulldump?MiniDumpWithFullMemory:(MiniDumpNormal | MiniDumpWithHandleData | MiniDumpWithUnloadedModules),NULL)){
       count++;
     }
-}
+  }
 
   int64 ticks_end = base::TimeTicks::HighResNow().ToInternalValue();
   int64 delta_ms = ticks_end - ticks_start;
 
-  g_profiler_process->profiler_data()->RawAction(
-    delta_ms,L"writeminidump",base::StringPrintf(L"write %d/%d minidump file to %ls",count,total,file_path.value().c_str()));
+  if(count){
+    g_profiler_process->profiler_data()->RawAction(
+      delta_ms,L"writeminidump",base::StringPrintf(L"write %d/%d minidump file of %ls to %ls",count,total,proc_name.c_str(),file_path.value().c_str()));
+  }
+}
+
+void WriteMinidump_IO(bool fulldump){
+  WriteMinidump_IO_Core(fulldump,L"360chrome.exe");
+  WriteMinidump_IO_Core(fulldump,L"360se.exe");
+  WriteMinidump_IO_Core(fulldump,L"chrome.exe");
 }
 
 void WriteMinidump(bool fulldump){
